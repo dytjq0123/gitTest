@@ -72,5 +72,16 @@ public class BoardController {
         model.addAttribute("board", board);
         return "boardModify";
     }
+
+    @PostMapping("/board/update/{id}")
+    public String boardupdate(@PathVariable("id") Integer id, Board board){
+        Board boardTemp = boardSerivce.boardView(id);
+        boardTemp.setTitle(board.getTitle());
+        boardTemp.setContent(board.getContent());
+
+        boardSerivce.write(boardTemp);
+
+        return "redirect:/board/list";
+    }
 }
 
