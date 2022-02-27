@@ -81,7 +81,7 @@ public class BoardController {
 
         boardSerivce.write(boardTemp);
 
-        return "redirect:/board/list";
+        return "redirect:/board/list"; //test
     }
 }
 
