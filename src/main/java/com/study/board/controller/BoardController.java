@@ -28,22 +28,24 @@ public class BoardController {
         return "boardWrite";
     }
 
-//    @PostMapping("/board/writepro")
-//    public String boardWritePro(String title, String content){
-//        System.out.println("title : " + title);
-//        System.out.println("content : " + content);
-//
-//        return "";
-//    }
-
     @PostMapping("/board/writepro")
-    public String boardWritePro(Board board){
-        System.out.println("title : " + board.getTitle());
-        System.out.println("content : " + board.getContent());
+    public String boardWritePro(Board board, Model model){
+        String sTitle = board.getTitle();
+        String sContent = board.getContent();
+        System.out.println("title : " + sTitle);
+        System.out.println("content : " + sContent);
 
-        boardSerivce.write(board);
+        if(!sTitle.isEmpty() && !sContent.isEmpty()){
+            model.addAttribute("message", "글 작성이 완료되었습니다.");
+            boardSerivce.write(board);
+            model.addAttribute("searchUrl", "/board/list");
+        }else {
+            model.addAttribute("message", "글 작성이 실패하였습니다.");
+            model.addAttribute("searchUrl", "/board/write");
+        }
 
-        return "";
+//        return "redirect:/board/list";
+        return "message";
     }
 
     @GetMapping("/board/list")
@@ -74,14 +76,28 @@ public class BoardController {
     }
 
     @PostMapping("/board/update/{id}")
-    public String boardupdate(@PathVariable("id") Integer id, Board board){
+    public String boardupdate(@PathVariable("id") Integer id, Board board, Model model){
         Board boardTemp = boardSerivce.boardView(id);
-        boardTemp.setTitle(board.getTitle());
-        boardTemp.setContent(board.getContent());
 
-        boardSerivce.write(boardTemp);
+        String sOriginTitle = boardTemp.getTitle();
+        String sOriginContent = boardTemp.getContent();
 
-        return "redirect:/board/list";
+        String sModTitle = board.getTitle();
+        String sModContent = board.getContent();
+
+        if(sOriginTitle.equals(sModTitle) && sOriginContent.equals(sOriginContent)){
+            model.addAttribute("message","글 수정이 취소되었습니다.");
+            model.addAttribute("searchUrl","/board/modify/"+id);
+        }else {
+            boardTemp.setTitle(board.getTitle());
+            boardTemp.setContent(board.getContent());
+            boardSerivce.write(boardTemp);
+            model.addAttribute("message","글 수정이 완료되었습니다.");
+            model.addAttribute("searchUrl","/board/list");
+        }
+
+        return "message";
+//        return "redirect:/board/list";
     }
 }
 
