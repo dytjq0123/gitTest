@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/writepro")
-    public String boardWritePro(Board board, Model model){
+    public String boardWritePro(Board board, Model model, MultipartFile file) throws Exception{
         String sTitle = board.getTitle();
         String sContent = board.getContent();
         System.out.println("title : " + sTitle);
@@ -37,7 +38,7 @@ public class BoardController {
 
         if(!sTitle.isEmpty() && !sContent.isEmpty()){
             model.addAttribute("message", "글 작성이 완료되었습니다.");
-            boardSerivce.write(board);
+            boardSerivce.write(board, file);
             model.addAttribute("searchUrl", "/board/list");
         }else {
             model.addAttribute("message", "글 작성이 실패하였습니다.");
@@ -76,7 +77,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/update/{id}")
-    public String boardupdate(@PathVariable("id") Integer id, Board board, Model model){
+    public String boardupdate(@PathVariable("id") Integer id, Board board, Model model, MultipartFile file) throws Exception{
         Board boardTemp = boardSerivce.boardView(id);
 
         String sOriginTitle = boardTemp.getTitle();
@@ -91,7 +92,7 @@ public class BoardController {
         }else {
             boardTemp.setTitle(board.getTitle());
             boardTemp.setContent(board.getContent());
-            boardSerivce.write(boardTemp);
+            boardSerivce.write(boardTemp, file);
             model.addAttribute("message","글 수정이 완료되었습니다.");
             model.addAttribute("searchUrl","/board/list");
         }
