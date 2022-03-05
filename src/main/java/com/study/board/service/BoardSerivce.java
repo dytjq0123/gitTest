@@ -29,6 +29,9 @@ public class BoardSerivce {
 
         file.transferTo(saveFile);
 
+        board.setFilename(fileName);
+        board.setFilepath("/files/"+fileName);
+
         boardRepository.save(board);
     }
 
