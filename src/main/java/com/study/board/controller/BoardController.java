@@ -54,8 +54,18 @@ public class BoardController {
     }
 
     @GetMapping("/board/list")
-    public String boardList(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<Board> boardList = boardSerivce.boardList(pageable);
+    public String boardList(Model model,
+                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                            String searchKeyword){
+
+        Page<Board> boardList = null;
+
+        if(searchKeyword == null){
+            boardList = boardSerivce.boardList(pageable);
+        }else{
+            boardList = boardSerivce.boardSearchList(searchKeyword, pageable);
+        }
+
         int nowPage = boardList.getPageable().getPageNumber() + 1;
         int startPage = Math.max(nowPage - 4, 1);
         int endPage = Math.min(nowPage + 5, boardList.getTotalPages());
